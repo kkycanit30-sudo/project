@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <!-- 모바일 및 다양한 기기 화면에 맞게 크기를 자동 조절해주는 뷰포트 설정 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>해린이의 산책 🐾 | Haerin's Walk</title>
+
+  <!-- 웹폰트 불러오기: 트렌디하고 세련된 프리텐다드(Pretendard) & 영문 폰트(Outfit) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Pretendard:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <!-- 아이콘 라이브러리: FontAwesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* ========================================================
+       1. 디자인 테마 변수 (CSS Custom Properties)
+       색상과 스타일을 한곳에서 쉽게 관리할 수 있도록 변수로 지정합니다.
+       ======================================================== */
+    :root {
+      --bg-dark: #090a10;           /* 깊고 세련된 어두운 배경색 */
+      --bg-card: rgba(255, 255, 255, 0.05); /* 투명한 유리 질감의 카드 배경 */
+      --border-card: rgba(255, 255, 255, 0.12); /* 카드의 은은한 테두리선 */
+      --primary: #7952ff;          /* 산뜻한 바이올렛 포인트 컬러 */
+      --primary-glow: rgba(121, 82, 255, 0.4);
+      --secondary: #00f2fe;        /* 밝고 청량한 시안(Cyan) 포인트 컬러 */
+      --secondary-glow: rgba(0, 242, 254, 0.35);
+      --accent: #ff4b8b;           /* 사랑스러운 핑크 포인트 컬러 */
+      --text-main: #f5f6fa;        /* 메인 텍스트 (화이트에 가까운 연회색) */
+      --text-sub: #a0aec0;         /* 보조 텍스트 (읽기 편한 부드러운 회색) */
+      --radius-sm: 12px;
+      --radius-md: 20px;
+      --radius-lg: 32px;
+      --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* ========================================================
+       2. 기본 초기화 및 공통 스타일 (Reset & Base Styles)
+       ======================================================== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth; /* 링크 클릭 시 부드럽게 스크롤 이동 */
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      overflow-x: hidden; /* 가로 스크롤 방지 */
+    }
+
+    body {
+      position: relative;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* 링크 기본 스타일 제거 */
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* 버튼 기본 스타일 초기화 */
+    button {
+      border: none;
+      outline: none;
+      background: none;
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    /* ========================================================
+       3. 화려한 오로라 배경 애니메이션 (Aurora Glow Effect)
+       신비롭고 몽환적인 빛망울이 천천히 회전하며 퍼지는 효과를 줍니다.
+       ======================================================== */
+    .aurora-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .aurora-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.55;
+      animation: floatAurora 18s infinite alternate ease-in-out;
+    }
+
+    .blob-1 {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+      top: -150px;
+      left: -100px;
+      animation-duration: 20s;
+    }
+
+    .blob-2 {
+      width: 550px;
+      height: 550px;
+      background: radial-gradient(circle, var(--secondary) 0%, transparent 70%);
+      bottom: 10%;
+      right: -150px;
+      animation-duration: 25s;
+    }
+
+    .blob-3 {
+      width: 450px;
+      height: 450px;
+      background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+      top: 45%;
+      left: 30%;
+      animation-duration: 22s;
+    }
+
+    @keyframes floatAurora {
+      0% {
+        transform: translate(0px, 0px) scale(1);
+      }
+      50% {
+        transform: translate(60px, 40px) scale(1.15);
+      }
+      100% {
+        transform: translate(-40px, -60px) scale(0.95);
+      }
+    }
+
+    /* ========================================================
+       4. 상단 스크롤 진행 바 (Scroll Progress Bar)
+       스크롤 위치에 따라 상단 바의 길이가 실시간으로 채워집니다.
+       ======================================================== */
+    .scroll-progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 4px;
+      width: 0%;
+      background: linear-gradient(90deg, var(--secondary), var(--primary), var(--accent));
+      z-index: 1000;
+      box-shadow: 0 0 12px var(--primary-glow);
+      transition: width 0.1s ease-out;
+    }
+
+    /* ========================================================
+       5. 상단 헤더 & 네비게이션 (Header & Navigation)
+       유리 질감(Glassmorphism)을 적용하여 반투명하게 제작했습니다.
+       ======================================================== */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 900;
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(9, 10, 16, 0.65);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-card);
+      transition: var(--transition);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: var(--text-main);
+    }
+
+    .logo-badge {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      color: #fff;
+      box-shadow: 0 4px 15px var(--primary-glow);
+    }
+
+    nav ul {
+      display: flex;
+      list-style: none;
+      gap: 28px;
+    }
+
+    nav a {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--text-sub);
+      transition: var(--transition);
+      position: relative;
+    }
+
+    nav a:hover {
+      color: #fff;
+    }
+
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--secondary), var(--primary));
+      transition: width 0.3s ease;
+      border-radius: 2px;
+    }
+
+    nav a:hover::after {
+      width: 100%;
+    }
+
+    /* ========================================================
+       6. 레이아웃 컨테이너
+       ======================================================== */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ========================================================
+       7. 메인 히어로 섹션 (Hero Section) & 중앙 비디오 플레이어
+       영상 '해린이의 산책.mp4'가 정중앙에 배치되는 핵심 영역입니다.
+       ======================================================== */
+    .hero {
+      min-height: 100vh;
+      padding: 130px 24px 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+    }
+
+    /* 감성적인 상단 뱃지 */
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      border-radius: 50px;
+      background: rgba(121, 82, 255, 0.15);
+      border: 1px solid rgba(121, 82, 255, 0.3);
+      color: #c4b5fd;
+      font-size: 0.88rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 0 20px rgba(121, 82, 255, 0.2);
+    }
+
+    .hero-tag i {
+      color: var(--secondary);
+    }
+
+    /* 화려한 그라디언트 메인 타이틀 */
+    .hero-title {
+      font-size: clamp(2.4rem, 5.5vw, 4.2rem);
+      font-weight: 800;
+      line-height: 1.2;
+      letter-spacing: -1.5px;
+      margin-bottom: 16px;
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #ffffff 10%, #c4b5fd 40%, var(--secondary) 85%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      color: var(--text-sub);
+      max-width: 640px;
+      margin-bottom: 44px;
+      font-weight: 400;
+      word-break: keep-all; /* 한글 단어 끊김 방지 */
+    }
+
+    /* --------------------------------------------------------
+       [핵심 스타일] 비디오 프레임 컨테이너 (Video Frame Wrapper)
+       모바일과 데스크톱 모두에서 비율이 절대로 깨지지 않도록 설계되었습니다.
+       -------------------------------------------------------- */
+    .video-showcase-wrapper {
+      width: 100%;
+      max-width: 920px; /* PC 화면에서 적절하고 아름다운 최대 너비 */
+      position: relative;
+      margin: 0 auto;
+    }
+
+    /* 비디오 외곽의 화려한 네온 글로우 효과 테두리 */
+    .video-glow-effect {
+      position: absolute;
+      inset: -4px;
+      background: linear-gradient(135deg, var(--secondary), var(--primary), var(--accent));
+      border-radius: calc(var(--radius-lg) + 4px);
+      filter: blur(14px);
+      opacity: 0.65;
+      z-index: 1;
+      transition: var(--transition);
+      animation: pulseGlow 6s infinite alternate ease-in-out;
+    }
+
+    @keyframes pulseGlow {
+      0% {
+        opacity: 0.45;
+        filter: blur(12px);
+      }
+      100% {
+        opacity: 0.8;
+        filter: blur(20px);
+      }
+    }
+
+    .video-card {
+      position: relative;
+      z-index: 2;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background: #0d0e17;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7);
+    }
+
+    /* 16:9 비율 유지 컨테이너 (모바일에서도 찌그러짐 방지) */
+    .video-container {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9; /* 모던 CSS 비율 속성: 16대 9 비율 고정 */
+      background-color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* 비디오 태그 스타일 */
+    .video-container video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* 화면을 가득 채우면서 왜곡 없이 자연스럽게 표시 */
+      display: block;
+    }
+
+    /* 비디오 위의 감성적인 오버레이 컨트롤 바 */
+    .video-overlay-controls {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      right: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+      pointer-events: none; /* 부모는 클릭 통과, 내부 버튼만 클릭 가능 */
+    }
+
+    .video-badge {
+      pointer-events: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 50px;
+      font-size: 0.85rem;
+      color: #fff;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: #10b981; /* 초록색 실시간 표시 점 */
+      box-shadow: 0 0 10px #10b981;
+      animation: blinkDot 1.5s infinite;
+    }
+
+    @keyframes blinkDot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* 인터랙티브 사운드/재생 토글 버튼 */
+    .control-actions {
+      pointer-events: auto;
+      display: flex;
+      gap: 10px;
+    }
+
+    .ctrl-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #ffffff;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+
+    .ctrl-btn:hover {
+      background: var(--primary);
+      border-color: var(--primary);
+      transform: scale(1.1);
+      box-shadow: 0 0 15px var(--primary-glow);
+    }
+
+    /* 아래로 스크롤 유도 화살표 */
+    .scroll-down-indicator {
+      margin-top: 45px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-sub);
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      animation: bounceDown 2s infinite ease-in-out;
+    }
+
+    @keyframes bounceDown {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(8px); }
+    }
+
+    /* ========================================================
+       8. 섹션 공통 스타일
+       ======================================================== */
+    section {
+      padding: 100px 0;
+      position: relative;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .section-subtitle {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--secondary);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .section-title {
+      font-size: clamp(2rem, 3.8vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -0.8px;
+      color: #fff;
+    }
+
+    .section-desc {
+      color: var(--text-sub);
+      font-size: 1.05rem;
+      max-width: 580px;
+      margin: 14px auto 0;
+      word-break: keep-all;
+    }
+
+    /* ========================================================
+       9. 산책 스토리 소개 섹션 (Story Section)
+       글래스모피즘 박스와 이미지/아이콘으로 구성된 소개 영역
+       ======================================================== */
+    .story-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .story-card-box {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-lg);
+      padding: 44px 36px;
+      position: relative;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+      transition: var(--transition);
+    }
+
+    .story-card-box:hover {
+      border-color: rgba(121, 82, 255, 0.4);
+      transform: translateY(-5px);
+      box-shadow: 0 25px 50px rgba(121, 82, 255, 0.15);
+    }
+
+    .story-card-box h3 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      line-height: 1.3;
+    }
+
+    .story-card-box p {
+      color: var(--text-sub);
+      font-size: 1.05rem;
+      line-height: 1.8;
+      margin-bottom: 24px;
+      word-break: keep-all;
+    }
+
+    .story-highlights {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .highlight-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 1rem;
+      color: #e2e8f0;
+    }
+
+    .highlight-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: rgba(0, 242, 254, 0.15);
+      color: var(--secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+
+    /* 산책 프로필 카드 (우측) */
+    .profile-card {
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.02));
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-lg);
+      padding: 40px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .profile-avatar-circle {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 24px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--primary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.2rem;
+      color: #fff;
+      box-shadow: 0 10px 30px rgba(255, 75, 139, 0.35);
+      position: relative;
+    }
+
+    .profile-avatar-circle::after {
+      content: '🐾';
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      font-size: 1.4rem;
+      background: #090a10;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--primary);
+    }
+
+    .profile-name {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .profile-status {
+      display: inline-block;
+      padding: 6px 14px;
+      background: rgba(0, 242, 254, 0.12);
+      border: 1px solid rgba(0, 242, 254, 0.3);
+      color: var(--secondary);
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+
+    .profile-tags {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .tag {
+      padding: 8px 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 30px;
+      font-size: 0.85rem;
+      color: var(--text-sub);
+    }
+
+    /* ========================================================
+       10. 산책 모먼트 & 하이라이트 (Moments Grid Section)
+       3개의 감각적인 반응형 카드 그리드
+       ======================================================== */
+    .moments-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+
+    .moment-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-md);
+      padding: 32px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .moment-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--primary), transparent);
+      opacity: 0;
+      transition: var(--transition);
+    }
+
+    .moment-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(255, 255, 255, 0.25);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+    }
+
+    .moment-card:hover::before {
+      opacity: 1;
+    }
+
+    .moment-icon-wrapper {
+      width: 58px;
+      height: 58px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+    }
+
+    .icon-flower {
+      background: rgba(255, 75, 139, 0.15);
+      color: var(--accent);
+    }
+
+    .icon-wind {
+      background: rgba(0, 242, 254, 0.15);
+      color: var(--secondary);
+    }
+
+    .icon-heart {
+      background: rgba(121, 82, 255, 0.15);
+      color: var(--primary);
+    }
+
+    .moment-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .moment-desc {
+      color: var(--text-sub);
+      font-size: 0.95rem;
+      line-height: 1.7;
+      word-break: keep-all;
+    }
+
+    /* ========================================================
+       11. 산책 기록 대시보드 (Daily Walk Stats)
+       오늘의 산책 통계를 세련된 카운터 카드로 표현
+       ======================================================== */
+    .stats-container {
+      background: linear-gradient(135deg, rgba(121, 82, 255, 0.12), rgba(0, 242, 254, 0.08));
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: var(--radius-lg);
+      padding: 48px 36px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 30px;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .stat-value {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(2.2rem, 3.5vw, 3.2rem);
+      font-weight: 800;
+      color: #fff;
+      background: linear-gradient(135deg, #fff, var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      color: var(--text-sub);
+      font-weight: 500;
+    }
+
+    /* ========================================================
+       12. 푸터 영역 (Footer)
+       ======================================================== */
+    footer {
+      border-top: 1px solid var(--border-card);
+      padding: 60px 24px;
+      text-align: center;
+      background: rgba(7, 8, 12, 0.8);
+      position: relative;
+    }
+
+    .footer-content {
+      max-width: 600px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .footer-logo {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .footer-msg {
+      color: var(--text-sub);
+      font-size: 0.92rem;
+      word-break: keep-all;
+    }
+
+    .footer-heart {
+      color: var(--accent);
+      animation: heartbeat 1.5s infinite;
+      display: inline-block;
+    }
+
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+
+    .copyright {
+      font-size: 0.8rem;
+      color: #64748b;
+      margin-top: 10px;
+    }
+
+    /* ========================================================
+       13. 스크롤 인터랙션 애니메이션 클래스 (Scroll Reveal)
+       화면에 들어올 때 부드럽게 페이드인되며 떠오르는 스타일입니다.
+       ======================================================== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: opacity, transform;
+    }
+
+    /* 화면에 도달했을 때 추가되는 클래스 */
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* 순차적 애니메이션 딜레이 효과 */
+    .delay-1 { transition-delay: 0.15s; }
+    .delay-2 { transition-delay: 0.3s; }
+    .delay-3 { transition-delay: 0.45s; }
+
+    /* ========================================================
+       14. 반응형 미디어 쿼리 (Responsive Media Queries)
+       태블릿 및 모바일 기기 화면에 맞춘 최적화 레이아웃
+       ======================================================== */
+    /* 992px 이하 태블릿 환경 */
+    @media (max-width: 992px) {
+      .story-grid {
+        grid-template-columns: 1fr;
+      }
+      .moments-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .stats-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 36px 20px;
+      }
+    }
+
+    /* 680px 이하 모바일 환경 */
+    @media (max-width: 680px) {
+      header {
+        padding: 14px 20px;
+      }
+
+      nav ul {
+        display: none; /* 모바일에서는 간결한 구성을 위해 기본 네비게이션 숨김 */
+      }
+
+      .hero {
+        padding: 100px 16px 60px;
+      }
+
+      .video-showcase-wrapper {
+        border-radius: var(--radius-md);
+      }
+
+      .video-card {
+        border-radius: var(--radius-md);
+      }
+
+      .video-glow-effect {
+        border-radius: calc(var(--radius-md) + 3px);
+      }
+
+      .video-overlay-controls {
+        bottom: 12px;
+        left: 12px;
+        right: 12px;
+      }
+
+      .video-badge {
+        font-size: 0.75rem;
+        padding: 6px 12px;
+      }
+
+      .ctrl-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 0.95rem;
+      }
+
+      .moments-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stats-container {
+        grid-template-columns: 1fr 1fr;
+        padding: 32px 20px;
+      }
+
+      .story-card-box {
+        padding: 30px 20px;
+      }
+
+      .profile-card {
+        padding: 30px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. 상단 스크롤 진행률 표시선 -->
+  <div class="scroll-progress-bar" id="progressBar"></div>
+
+  <!-- 2. 신비로운 오로라 배경 효과 -->
+  <div class="aurora-bg">
+    <div class="aurora-blob blob-1"></div>
+    <div class="aurora-blob blob-2"></div>
+    <div class="aurora-blob blob-3"></div>
+  </div>
+
+  <!-- 3. 상단 네비게이션 헤더 -->
+  <header>
+    <div class="logo">
+      <div class="logo-badge">
+        <i class="fa-solid fa-paw"></i>
+      </div>
+      <span>해린이의 산책</span>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="#hero">홈</a></li>
+        <li><a href="#story">해린이 이야기</a></li>
+        <li><a href="#moments">산책 모먼트</a></li>
+        <li><a href="#stats">산책 기록</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- 4. 메인 히어로 섹션 (중앙 비디오 플레이어 탑재) -->
+  <main>
+    <section class="hero" id="hero">
+      
+      <!-- 상단 감성 배지 -->
+      <div class="hero-tag reveal">
+        <i class="fa-solid fa-sparkles"></i>
+        <span>반짝이는 하루의 기록</span>
+      </div>
+
+      <!-- 메인 타이틀 & 부제목 -->
+      <h1 class="hero-title reveal delay-1">
+        세상에서 가장 특별한 걸음,<br>
+        <span class="gradient-text">해린이의 산책</span>
+      </h1>
+      <p class="hero-subtitle reveal delay-2">
+        살랑이는 바람과 따스한 햇살 속에서 만나는 소소하지만 확실한 행복.<br>
+        해린이와 함께 걸으며 느끼는 따뜻한 순간을 감상해 보세요.
+      </p>
+
+      <!-- [핵심] 중앙 메인 비디오 프레임 -->
+      <div class="video-showcase-wrapper reveal delay-3">
+        <!-- 네온 글로우 테두리 효과 -->
+        <div class="video-glow-effect"></div>
+
+        <!-- 글래스모피즘 비디오 카드 프레임 -->
+        <div class="video-card">
+          <div class="video-container">
+            <!-- 
+              [비디오 태그 설정 안내]
+              - autoplay: 페이지 로드 시 자동 재생
+              - loop: 영상이 끝나면 무한 반복 재생
+              - muted: 소리를 끈 상태로 재생 (브라우저 자동재생 필수 조건)
+              - playsinline: 모바일 기기(아이폰 등)에서 전체화면으로 튕기지 않고 화면 안에서 재생
+            -->
+            <video id="mainVideo" autoplay loop muted playsinline preload="auto">
+              <!-- 프로젝트 루트의 '해린이의 산책.mp4' 파일 연결 -->
+              <source src="해린이의 산책.mp4" type="video/mp4">
+              현재 사용하시는 브라우저는 비디오 재생을 지원하지 않습니다.
+            </video>
+
+            <!-- 비디오 상단에 띄우는 편의 컨트롤 오버레이 -->
+            <div class="video-overlay-controls">
+              <!-- 실시간 재생 뱃지 -->
+              <div class="video-badge">
+                <span class="live-dot"></span>
+                <span>Haerin's Moments</span>
+              </div>
+
+              <!-- 음소거 토글 및 재생 제어 버튼 -->
+              <div class="control-actions">
+                <!-- 음소거 ON/OFF 버튼 (초기 상태: muted) -->
+                <button type="button" class="ctrl-btn" id="muteBtn" title="소리 켜기/끄기" aria-label="소리 켜기">
+                  <i class="fa-solid fa-volume-xmark" id="muteIcon"></i>
+                </button>
+                <!-- 일시정지 / 재생 버튼 -->
+                <button type="button" class="ctrl-btn" id="playBtn" title="재생/일시정지" aria-label="일시정지">
+                  <i class="fa-solid fa-pause" id="playIcon"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 아래로 스크롤 안내 인디케이터 -->
+      <div class="scroll-down-indicator reveal">
+        <span>Scroll Down</span>
+        <i class="fa-solid fa-angle-down"></i>
+      </div>
+
+    </section>
+
+    <!-- 5. 산책 스토리 소개 섹션 -->
+    <section id="story">
+      <div class="container">
+        <div class="section-header reveal">
+          <span class="section-subtitle">Walk Story</span>
+          <h2 class="section-title">오늘의 발걸음이 머문 곳</h2>
+          <p class="section-desc">발자국마다 피어나는 작은 호기심과 즐거움, 해린이만의 특별한 산책 이야기입니다.</p>
+        </div>
+
+        <div class="story-grid">
+          <!-- 좌측: 이야기 설명 카드 -->
+          <div class="story-card-box reveal">
+            <h3>매일매일이 새로운<br>해린이의 탐험 일기</h3>
+            <p>
+              익숙한 동네 골목길도 해린이의 눈에는 매 순간 새로운 모험의 시작입니다.
+              바스락거리는 나뭇잎 소리에 귀를 기울이고, 귓가를 스치는 봄바람에 기분 좋게 꼬리를 흔들며
+              오늘도 세상과 기분 좋은 교감을 나눕니다.
+            </p>
+            <div class="story-highlights">
+              <div class="highlight-item">
+                <div class="highlight-icon"><i class="fa-solid fa-leaf"></i></div>
+                <span>자연의 풀잎 향기와 계절의 변화 느끼기</span>
+              </div>
+              <div class="highlight-item">
+                <div class="highlight-icon"><i class="fa-solid fa-sun"></i></div>
+                <span>따스한 햇살 아래에서 나누는 기분 좋은 산책</span>
+              </div>
+              <div class="highlight-item">
+                <div class="highlight-icon"><i class="fa-solid fa-heart"></i></div>
+                <span>함께 걷는 이에게 전해지는 무한한 힐링 에너지</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 우측: 프로필 카드 -->
+          <div class="profile-card reveal delay-1">
+            <div class="profile-avatar-circle">
+              🐶
+            </div>
+            <h3 class="profile-name">해린 (Haerin)</h3>
+            <span class="profile-status">오늘의 산책 마스터</span>
+            <div class="profile-tags">
+              <span class="tag">#호기심가득</span>
+              <span class="tag">#산책러버</span>
+              <span class="tag">#행복뿜뿜</span>
+              <span class="tag">#바람느끼기</span>
+              <span class="tag">#에너지충전</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. 산책 모먼트 & 하이라이트 카드 그리드 -->
+    <section id="moments">
+      <div class="container">
+        <div class="section-header reveal">
+          <span class="section-subtitle">Moments</span>
+          <h2 class="section-title">산책 중 가장 빛나는 순간들</h2>
+          <p class="section-desc">해린이가 산책할 때 가장 좋아하는 세 가지 즐거움을 소개합니다.</p>
+        </div>
+
+        <div class="moments-grid">
+          <!-- 모먼트 1 -->
+          <div class="moment-card reveal">
+            <div class="moment-icon-wrapper icon-flower">
+              <i class="fa-solid fa-seedling"></i>
+            </div>
+            <h3 class="moment-title">꽃과 풀잎 냄새 맡기</h3>
+            <p class="moment-desc">
+              길가에 피어난 작은 들꽃과 풀잎 하나하나 꼼꼼히 냄새를 맡으며 자연이 주는 소식을 탐색합니다.
+            </p>
+          </div>
+
+          <!-- 모먼트 2 -->
+          <div class="moment-card reveal delay-1">
+            <div class="moment-icon-wrapper icon-wind">
+              <i class="fa-solid fa-wind"></i>
+            </div>
+            <h3 class="moment-title">바람 맞으며 전력 질주</h3>
+            <p class="moment-desc">
+              넓은 잔디밭에 도착하면 온 힘을 다해 신나게 달립니다. 펄럭이는 귀와 환한 미소가 최고의 포인트!
+            </p>
+          </div>
+
+          <!-- 모먼트 3 -->
+          <div class="moment-card reveal delay-2">
+            <div class="moment-icon-wrapper icon-heart">
+              <i class="fa-solid fa-comments"></i>
+            </div>
+            <h3 class="moment-title">친구들과의 반가운 인사</h3>
+            <p class="moment-desc">
+              산책길에서 마주치는 이웃 친구들과 정답게 눈인사를 나누며 다정하고 따뜻한 우정을 쌓아갑니다.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. 산책 기록 대시보드 (Stats Section) -->
+    <section id="stats">
+      <div class="container">
+        <div class="section-header reveal">
+          <span class="section-subtitle">Walk Record</span>
+          <h2 class="section-title">오늘의 산책 대시보드</h2>
+          <p class="section-desc">건강하고 활기찬 산책 데이터를 한눈에 확인해 보세요.</p>
+        </div>
+
+        <div class="stats-container reveal">
+          <!-- 통계 1: 산책 시간 -->
+          <div class="stat-item">
+            <div class="stat-value" data-target="45">45m</div>
+            <div class="stat-label">오늘의 산책 시간</div>
+          </div>
+          <!-- 통계 2: 산책 거리 -->
+          <div class="stat-item">
+            <div class="stat-value" data-target="2.8">2.8km</div>
+            <div class="stat-label">이동한 총 거리</div>
+          </div>
+          <!-- 통계 3: 걸음 수 -->
+          <div class="stat-item">
+            <div class="stat-value" data-target="4820">4,820</div>
+            <div class="stat-label">해린이의 총 걸음 수</div>
+          </div>
+          <!-- 통계 4: 행복 지수 -->
+          <div class="stat-item">
+            <div class="stat-value" data-target="100">100%</div>
+            <div class="stat-label">오늘의 행복 지수</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 8. 푸터 영역 -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-logo">
+        🐾 해린이의 산책
+      </div>
+      <p class="footer-msg">
+        사랑하는 해린이와 함께하는 모든 걸음이 따뜻한 추억으로 남기를 바라며 <span class="footer-heart">♥</span>
+      </p>
+      <div class="copyright">
+        © 2026 Haerin's Walk. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========================================================
+       15. 자바스크립트 인터랙션 로직 (JavaScript)
+       - 스크롤 진행 바 계산
+       - 비디오 음소거/재생 제어
+       - Intersection Observer를 활용한 부드러운 스크롤 애니메이션
+       ======================================================== -->
+  <script>
+    // 문서가 완전히 준비되었을 때 스크립트를 실행합니다.
+    document.addEventListener('DOMContentLoaded', () => {
+
+      /* ----------------------------------------------------
+         (1) 상단 스크롤 진행률 표시 바 (Scroll Progress Bar)
+         스크롤할 때마다 전체 페이지 길이 대비 현재 스크롤 위치를 %로 계산
+         ---------------------------------------------------- */
+      const progressBar = document.getElementById('progressBar');
+
+      window.addEventListener('scroll', () => {
+        const scrollTop = window.scrollY || document.documentElement.scrollTop;
+        const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const scrollPercentage = (scrollTop / scrollHeight) * 100;
+        progressBar.style.width = scrollPercentage + '%';
+      });
+
+      /* ----------------------------------------------------
+         (2) 비디오 음소거 해제/설정 및 일시정지 제어
+         ---------------------------------------------------- */
+      const video = document.getElementById('mainVideo');
+      const muteBtn = document.getElementById('muteBtn');
+      const muteIcon = document.getElementById('muteIcon');
+      const playBtn = document.getElementById('playBtn');
+      const playIcon = document.getElementById('playIcon');
+
+      // 음소거 토글 버튼 클릭 이벤트
+      muteBtn.addEventListener('click', () => {
+        if (video.muted) {
+          // 음소거 해제 (소리 켜기)
+          video.muted = false;
+          muteIcon.classList.remove('fa-volume-xmark');
+          muteIcon.classList.add('fa-volume-high');
+          muteBtn.title = "소리 끄기";
+        } else {
+          // 음소거 설정 (소리 끄기)
+          video.muted = true;
+          muteIcon.classList.remove('fa-volume-high');
+          muteIcon.classList.add('fa-volume-xmark');
+          muteBtn.title = "소리 켜기";
+        }
+      });
+
+      // 재생 / 일시정지 토글 버튼 클릭 이벤트
+      playBtn.addEventListener('click', () => {
+        if (video.paused) {
+          video.play();
+          playIcon.classList.remove('fa-play');
+          playIcon.classList.add('fa-pause');
+          playBtn.title = "일시정지";
+        } else {
+          video.pause();
+          playIcon.classList.remove('fa-pause');
+          playIcon.classList.add('fa-play');
+          playBtn.title = "재생";
+        }
+      });
+
+      /* ----------------------------------------------------
+         (3) 화면 스크롤 시 부드럽게 나타나는 애니메이션 (Intersection Observer)
+         요소가 화면(뷰포트)의 15% 이상 들어오면 .active 클래스를 추가합니다.
+         ---------------------------------------------------- */
+      const reveals = document.querySelectorAll('.reveal');
+
+      const observerOptions = {
+        root: null, // 브라우저 화면 기준
+        rootMargin: '0px',
+        threshold: 0.15 // 요소의 15%가 보일 때 트리거
+      };
+
+      const observer = new IntersectionObserver((entries, observerInstance) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('active'); // 애니메이션 실행
+            // 한 번 나타난 요소는 계속 유지되도록 관찰을 중단합니다.
+            observerInstance.unobserve(entry.target);
+          }
+        });
+      }, observerOptions);
+
+      // 모든 대상 요소들을 관찰 등록
+      reveals.forEach(el => observer.observe(el));
+
+      /* ----------------------------------------------------
+         (4) 네비게이션 부드러운 스크롤 이동 보조
+         ---------------------------------------------------- */
+      document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+          e.preventDefault();
+          const targetId = this.getAttribute('href');
+          const targetElement = document.querySelector(targetId);
+
+          if (targetElement) {
+            targetElement.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+          }
+        });
+      });
+
+    });
+  </script>
+</body>
+</html>
+
